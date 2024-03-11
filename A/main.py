@@ -1,23 +1,29 @@
-from preprocessing import Preprocess
-from custom_dataloader import Custom_dataloader
-from process import Process
-from early_stopper import Early_stopper
-from RNN import RNN
-
+import sys
+import os
 import time
 import torch
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.join(current_dir, '..')
+sys.path.append(parent_dir)
+
+from Common.preprocessor import Preprocessor
+from Common.custom_dataloader import CustomDataloader
+from Common.processor import Processor
+from Common.early_stopper import EarlyStopper
+from RNN import RNN
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using {device} device.")
 
-    preprocess = Preprocess(data_dir="Datasets/train.csv", 
-                            read=True, 
-                            sample_size=100000, 
-                            include_content=False)
+    preprocess = Preprocessor(data_dir="Datasets/raw/train.csv", 
+                              read=True, 
+                              sample_size=100000, 
+                              include_content=False)
     data_list = preprocess.get_preprocessed_data()
 
-    custom_dataloader = Custom_dataloader(data_list)
+    custom_dataloader = CustomDataloader(data_list)
     train_dataloader, val_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=True)
 
     vocab_size = len(custom_dataloader.vocab)
@@ -33,8 +39,8 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     criterion = torch.nn.CrossEntropyLoss()
 
-    early_stopper = Early_stopper(patience=3, min_delta=0)
-    process = Process(model, optimizer, criterion)
+    early_stopper = EarlyStopper(patience=3, min_delta=0)
+    process = Processor(model, optimizer, criterion)
 
     epoch = 20
     train_start_time = time.time()

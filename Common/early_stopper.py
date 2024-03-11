@@ -1,4 +1,4 @@
-class Early_stopper():
+class EarlyStopper():
     def __init__(self, patience=1, min_delta=0):
         self.patience = patience
         self.min_delta = min_delta

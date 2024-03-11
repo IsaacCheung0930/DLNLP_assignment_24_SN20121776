@@ -9,11 +9,11 @@ import re
 import warnings
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
-class Preprocess():
+class Preprocessor():
     def __init__(self, data_dir, read=False, sample_size=20000, include_content=False, max_length = 15, min_length = 5):
         self._data_list = []
         if read:
-            with open('Datasets/data.csv', mode='r', encoding='utf-8') as file:
+            with open("Datasets/preprocessed/data.csv", mode="r", encoding="utf-8") as file:
                 reader = csv.reader(file)
                 next(reader)  # Skip header row
                 for row in reader:
@@ -49,7 +49,7 @@ class Preprocess():
 
         print(f"Appended {len(self._data_list)} samples.")
 
-        with open('Datasets/data.csv', mode='w', newline='', encoding='utf-8') as file:
+        with open("Datasets/preprocessed/data.csv", mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["label", "data"])
             writer.writerows(self._data_list)

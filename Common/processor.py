@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_recall_fscore_support
 
-class Process():
+class Processor():
     def __init__(self, model, optimizer, criterion):
         self._model = model
         self._optimizer = optimizer

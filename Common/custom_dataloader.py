@@ -5,7 +5,7 @@ from torchtext.data.functional import to_map_style_dataset
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 
-class Custom_dataloader():
+class CustomDataloader():
     def __init__(self, data_list):
         self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self._tokenizer = get_tokenizer("basic_english")

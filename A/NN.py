@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from preprocessing import Preprocess
-from custom_dataloader import Custom_dataloader
+from Common.preprocessor import Preprocessor
+from Common.custom_dataloader import CustomDataloader
 import time
 
 class TextClassificationModel(nn.Module):
@@ -70,9 +70,9 @@ def predict(model, text, pipeline):
         
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    preprocess = Preprocess("Datasets/train.csv", read=True)
+    preprocess = Preprocessor("Datasets/train.csv", read=True)
     data_list = preprocess.get_preprocessed_data()
-    custom_dataloader = Custom_dataloader(data_list)
+    custom_dataloader = CustomDataloader(data_list)
     train_dataloader, valid_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=False)
 
     num_class = len(set([label for (label, text) in data_list]))

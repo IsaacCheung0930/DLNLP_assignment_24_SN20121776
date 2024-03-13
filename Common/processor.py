@@ -38,7 +38,7 @@ class Processor():
 
         return avg_accu, avg_loss
 
-    def validation(self, dataloader):
+    def validation(self, dataloader, type="valid"):
         # switch to evaluate mode
         self._model.eval()
         total_accu, total_loss, total_count = 0, 0, 0
@@ -56,9 +56,10 @@ class Processor():
 
         avg_accu = total_accu/total_count
         avg_loss = total_loss/total_count
-
-        self._valid_accu.append(avg_accu)
-        self._valid_loss.append(avg_loss)
+        
+        if type == "valid":
+            self._valid_accu.append(avg_accu)
+            self._valid_loss.append(avg_loss)
 
         return avg_accu, avg_loss
 

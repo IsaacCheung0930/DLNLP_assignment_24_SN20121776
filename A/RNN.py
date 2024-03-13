@@ -4,7 +4,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 class RNN(nn.Module):
     def __init__(self, vocab_size, embed_size, num_classes, model="LSTM",
-                 dropout=0.2, hidden_size=64, num_layers=2, use_last=False):
+                 dropout=0.3, hidden_size=32, num_layers=2, use_last=False):
         super(RNN, self).__init__()
 
         self.use_last = use_last
@@ -17,7 +17,7 @@ class RNN(nn.Module):
                                 num_layers=num_layers, 
                                 dropout=dropout,
                                 batch_first=True, 
-                                bidirectional=True)
+                                bidirectional=False)
         else:
             self.rnn = nn.GRU(input_size=embed_size, 
                               hidden_size=hidden_size, 
@@ -26,8 +26,8 @@ class RNN(nn.Module):
                               batch_first=True, 
                               bidirectional=True)
             
-        self.batch_normalisation = nn.BatchNorm1d(hidden_size*2)
-        self.linear = nn.Linear(hidden_size*2, num_classes)
+        self.batch_normalisation = nn.BatchNorm1d(hidden_size)
+        self.linear = nn.Linear(hidden_size, num_classes)
         self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
 

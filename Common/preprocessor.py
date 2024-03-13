@@ -1,29 +1,31 @@
 import unicodedata
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 import spacy
+from langdetect import detect
 
 from tqdm import tqdm
 import csv
 import pandas as pd
 import re
 import warnings
+
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 class Preprocessor():
-    def __init__(self, data_dir, read=False, sample_size=20000, include_content=False, max_length = 15, min_length = 5):
+    def __init__(self, data_dir, read=False, sample_size=20000, 
+                 include_content=False, max_length = 15, min_length = 5):
         self._data_list = []
         if read:
             with open("Datasets/preprocessed/data.csv", mode="r", encoding="utf-8") as file:
                 reader = csv.reader(file)
                 next(reader)  # Skip header row
                 for row in reader:
-                    label, title = row
-                    self._data_list.append((int(label), title))
+                    index, label, question, answer = row
+                    self._data_list.append((index, int(label), question, answer))
             print(f"Loaded {len(self._data_list)} samples from CSV.")
         else:
             self._spacy_en = spacy.load("en_core_web_sm")
             self._load_csv(data_dir, sample_size, include_content, max_length, min_length)
-        
         
     def _load_csv(self, data_dir, sample_size, include_content, max_length, min_length):
         data_df = pd.read_csv(data_dir)
@@ -32,31 +34,33 @@ class Preprocessor():
         sampled_df = data_df.sample(n=sample_size, random_state=42, ignore_index=True)
         print(f"Sampled {sample_size} data entries.")
 
+
         print(f"Filtering {sample_size} samples...")
         for i in tqdm(range(len(sampled_df))):
             label = sampled_df["class_index"].loc[i]
-            title = self._sentence_normaliser(sampled_df["question_title"].loc[i])
+            question = self._sentence_normaliser(sampled_df["question_title"].loc[i])
 
+            length = len(question.split())
+            if length < min_length or length > max_length:
+                continue
+
+            answer = self._sentence_normaliser(sampled_df["best_answer"].loc[i])
+            
             if include_content:
                 content = self._sentence_normaliser(sampled_df["question_content"].loc[i])
-                data = title + " " + content
-            else: 
-                data = title
+                question = " ".join([question, content])
 
-            length = len(data.split())
-            if length >= min_length and length <= max_length:
-                self._data_list.append((label, data))
-
+            self._data_list.append((i, label, question, answer))
         print(f"Appended {len(self._data_list)} samples.")
 
         with open("Datasets/preprocessed/data.csv", mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
-            writer.writerow(["label", "data"])
+            writer.writerow(["index", "label", "question", "answer"])
             writer.writerows(self._data_list)
         print(f"Saved {len(self._data_list)} samples to CSV.")
 
     def _sentence_normaliser(self, sentence):
-        if isinstance(sentence, str):
+        if isinstance(sentence, str) and sentence != "":
             # Filter HTML tags
             if BeautifulSoup(sentence, "html.parser").find():
                 sentence = BeautifulSoup(sentence, 'html.parser').get_text()
@@ -105,7 +109,7 @@ class Preprocessor():
     def get_class_distribution(self):
         class_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-        for (label, _) in self._data_list:
+        for (_, label, _, _) in self._data_list:
             class_count[label-1] += 1
 
         class_distribution = {"Society & Culture":     class_count[0], 
@@ -123,7 +127,7 @@ class Preprocessor():
 
     def get_length_distribution(self):
         length_distribution = {}
-        for (_, data) in self._data_list:
+        for (_, _, data, _) in self._data_list:
             length = len(data.split())
             if length in length_distribution:
                 length_distribution[length] += 1

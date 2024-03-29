@@ -11,24 +11,31 @@ from Common.preprocessor import Preprocessor
 from Common.custom_dataloader import CustomDataloader
 from Common.processor import Processor
 from Common.early_stopper import EarlyStopper
+from B.huggingface import Transformer
 from RNN import RNN
 from NN import TextClassificationModel
 
 def main():
     # Enable CUDA usage
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using {device} device.")
+    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #print(f"Using {device} device.")
 
     # Preprocessing
     preprocess = Preprocessor(data_dir="Datasets/raw/train.csv", 
-                              read=False, 
+                              read=True, 
                               sample_size=100000)
     data_list = preprocess.get_preprocessed_data()
 
     # Obtain dataloaders for the model
     custom_dataloader = CustomDataloader(data_list)
-    train_dataloader, val_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=True)
+    #train_dataloader, val_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=True)
+    train_df = custom_dataloader.get_split_data_df("train")
+    val_df = custom_dataloader.get_split_data_df("val")
+    test_df = custom_dataloader.get_split_data_df("test")
+    transformer = Transformer(train_df, val_df, test_df)
 
+    transformer.train()
+    '''
     # Define model parameters
     vocab_size = len(custom_dataloader.vocab)
     num_class = len(preprocess.get_class_distribution())
@@ -89,7 +96,7 @@ def main():
         print(f"{test_samples[i][3]}")
         print(f"| Predicted: {sample_pred[i] + 1} | True: {sample_true[i] + 1} | ")
     print("-" * 45)
-    
+    '''
 
 
 

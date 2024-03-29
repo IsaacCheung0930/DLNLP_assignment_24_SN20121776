@@ -1,3 +1,5 @@
 __pycache__
 *.csv
 Instruction.pdf
+B/logs
+B/results

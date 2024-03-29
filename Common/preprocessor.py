@@ -1,7 +1,6 @@
 import unicodedata
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 import spacy
-from langdetect import detect
 
 from tqdm import tqdm
 import csv
@@ -12,8 +11,52 @@ import warnings
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 class Preprocessor():
+    '''
+    A class for preprocessing the input dataset.
+
+    Attributes:
+        data_dir (str): 
+            The directory of the csv file.
+        read (bool): 
+            Use existing preprocessed data.
+        sample_size (int): 
+            Number of samples taken from the dataset.
+        include_content (bool): 
+            Include question contents from the dataset.
+        max_length (int): 
+            Maximum length of the question title.
+        min_length (int): 
+            Minimum length of the question title.
+    
+    Methods:
+        get_preprocessed_data:
+            Return the preprocessed dataset.
+        get_class_distribution:
+            Return the individual class count of the preprocessed dataset.
+        get_length_distribution:
+            Return the question length distribution of the preprocessed dataset.
+        get_sampled_data
+            Return the sampled dataset before preprocessing. 
+    '''
     def __init__(self, data_dir, read=False, sample_size=20000, 
                  include_content=False, max_length = 15, min_length = 5):
+        '''
+        Initialise the Preprocessor class. Carry out preprocessing or load existing data based on input.
+
+        Parameters:
+            data_dir (str): 
+                The directory of the csv file.
+            read (bool): 
+                Use existing preprocessed data.
+            sample_size (int): 
+                Number of samples taken from the dataset.
+            include_content (bool): 
+                Include question contents from the dataset.
+            max_length (int): 
+                Maximum length of the question title.
+            min_length (int): 
+                Minimum length of the question title.
+        '''
         self._data_list = []
         if read:
             with open("Datasets/preprocessed/data.csv", mode="r", encoding="utf-8") as file:
@@ -28,26 +71,40 @@ class Preprocessor():
             self._load_csv(data_dir, sample_size, include_content, max_length, min_length)
         
     def _load_csv(self, data_dir, sample_size, include_content, max_length, min_length):
+        '''
+        Load the CSV file from the specified directory and perform sampling.
+
+        Parameter:
+            data_dir (str): 
+                The directory of the csv file.
+            sample_size (int): 
+                Number of samples taken from the dataset.
+            include_content (bool): 
+                Include question contents from the dataset.
+            max_length (int): 
+                Maximum length of the question title.
+            min_length (int): 
+                Minimum length of the question title.
+        '''
         data_df = pd.read_csv(data_dir)
         print(f"Loaded {len(data_df)} data entries.")
 
-        sampled_df = data_df.sample(n=sample_size, random_state=42, ignore_index=True)
+        self._sampled_df = data_df.sample(n=sample_size, random_state=42, ignore_index=True)
         print(f"Sampled {sample_size} data entries.")
 
-
         print(f"Filtering {sample_size} samples...")
-        for i in tqdm(range(len(sampled_df))):
-            label = sampled_df["class_index"].loc[i]
-            question = self._sentence_normaliser(sampled_df["question_title"].loc[i])
+        for i in tqdm(range(len(self._sampled_df))):
+            label = self._sampled_df["class_index"].loc[i]
+            question = self._sentence_normaliser(self._sampled_df["question_title"].loc[i])
 
             length = len(question.split())
             if length < min_length or length > max_length:
                 continue
 
-            answer = self._sentence_normaliser(sampled_df["best_answer"].loc[i])
+            answer = self._sentence_normaliser(self._sampled_df["best_answer"].loc[i])
             
             if include_content:
-                content = self._sentence_normaliser(sampled_df["question_content"].loc[i])
+                content = self._sentence_normaliser(self._sampled_df["question_content"].loc[i])
                 question = " ".join([question, content])
 
             self._data_list.append((i, label, question, answer))
@@ -60,6 +117,17 @@ class Preprocessor():
         print(f"Saved {len(self._data_list)} samples to CSV.")
 
     def _sentence_normaliser(self, sentence):
+        '''
+        The core of the preprocessor. Remove unnecessary components from a string.
+
+        Parameter:
+            sentence (str):
+                The sentence to be normalised.
+        
+        Return:
+            sentence (str):
+                The normalised sentence.
+        '''
         if isinstance(sentence, str) and sentence != "":
             # Filter HTML tags
             if BeautifulSoup(sentence, "html.parser").find():
@@ -96,6 +164,16 @@ class Preprocessor():
         return sentence
     
     def _ascii_converter(self, sentence):
+        '''
+        Ensure all characters in the sentence are ascii characters.
+
+        Parameter:
+            sentence (str):
+                The sentence to be checked.
+        Return:
+            ascii_sentence (str):
+                The ascii converted sentence.
+        '''
         ascii_sentence = ""
         for character in unicodedata.normalize("NFD", sentence):
             if unicodedata.category(character) != "Mn":
@@ -104,9 +182,23 @@ class Preprocessor():
         return ascii_sentence
     
     def get_preprocessed_data(self):
+        '''
+        Return the preprocessed data.
+
+        Return:
+            self._data_list (list):
+                The sampled dataset with normalised sentences.
+        '''
         return self._data_list
     
     def get_class_distribution(self):
+        '''
+        Return the class distribution of the preprocessed data
+
+        Return:
+            class_distribution (dict):
+                The count and distribution of each class.
+        '''
         class_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         for (_, label, _, _) in self._data_list:
@@ -126,6 +218,13 @@ class Preprocessor():
         return class_distribution
 
     def get_length_distribution(self):
+        '''
+        Return the length distribution of the question titles of the sampled data.
+
+        Return:
+            sorted(length_distribution.items()) (tuple):
+                The counter of each title length in ascending order.
+        '''
         length_distribution = {}
         for (_, _, data, _) in self._data_list:
             length = len(data.split())
@@ -135,3 +234,13 @@ class Preprocessor():
                 length_distribution[length] = 1
 
         return sorted(length_distribution.items())
+    
+    def get_sampled_data(self):
+        '''
+        Return the sampled data before preprocessing.
+
+        Return:
+            self._sampled_df (dataframe):
+                The sampled data. 
+        '''
+        return self._sampled_df

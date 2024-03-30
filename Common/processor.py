@@ -1,17 +1,59 @@
-import numpy as np
 import torch
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, precision_recall_fscore_support
 
 class Processor():
+    '''
+    A class for training, evaluation and predicting Pytorch model.
+
+    Parameters:
+        model (torch.nn.Module): 
+            The Pytorch model.
+        optimizer (torch.optim):
+            The selected optimizer.
+        criterion (torch.nn):
+            The selected criterion.
+
+    Methods:
+        training(dataloader):
+            The training loop.
+        validation(dataloader, type="valid")
+            The validation loop.
+        prediction(dataloader)
+            The prediction loop.
+        get_evaluation_info(self)
+            Return all evaluation information.
+    '''
     def __init__(self, model, optimizer, criterion):
+        '''
+        Initiate the processor. 
+
+        Parameters:
+            model (torch.nn.Module): 
+                The Pytorch model.
+            optimizer (torch.optim):
+                The selected optimizer.
+            criterion (torch.nn):
+                The selected criterion.
+        '''
         self._model = model
         self._optimizer = optimizer
         self._criterion = criterion
         self._train_accu, self._train_loss = [], []
         self._valid_accu, self._valid_loss = [], []
-        
+
     def training(self, dataloader):
+        '''
+        The training loop.
+
+        Parameter:
+            dataloader (DataLoader):
+                The dataloader containing the train set. 
+
+        Return:
+            avg_accu (list):
+                The average accuracy of this epoch.
+            avg_loss (list):
+                The average loss of this epoch.
+        '''
         # switch to train mode
         self._model.train()
         total_accu, total_loss, total_count = 0, 0, 0
@@ -39,6 +81,22 @@ class Processor():
         return avg_accu, avg_loss
 
     def validation(self, dataloader, type="valid"):
+        '''
+        The validation loop.
+
+        Parameters:
+            dataloader (list):
+                The dataloader containing the validation/ test set.
+            type (str):
+                Determine whether the function is used for validation or test set. 
+        
+        Return:
+            avg_accu (list):
+                The average accuracy.
+            avg_loss (list):
+                The average loss.
+        
+        '''
         # switch to evaluate mode
         self._model.eval()
         total_accu, total_loss, total_count = 0, 0, 0
@@ -60,10 +118,26 @@ class Processor():
         if type == "valid":
             self._valid_accu.append(avg_accu)
             self._valid_loss.append(avg_loss)
-
+        else:
+            print("-" * 45)
+            print(f"| Test accuracy:  {avg_accu:5.3f} | test loss:  {avg_loss:5.3f} |")
+            print("-" * 45)
         return avg_accu, avg_loss
 
     def prediction(self, dataloader):
+        '''
+        The prediction loop.
+
+        Parameters:
+            dataloader (list):
+                The dataloader containing the test set.
+        
+        Return:
+            true_values (list):
+                The true labels of the test set.
+            pred_values (list):
+                The predicted labels of the test set.
+        '''
         self._model.eval()
         pred_values, true_values = [], []
 
@@ -77,58 +151,27 @@ class Processor():
                     pred_values.append(pred.item())
                     true_values.append(true.item())
 
+        self._true_values = true_values
+        self._pred_values = pred_values
+
         return true_values, pred_values
 
-    def evaluation(self, true_values, pred_values):
-        self._loss_accu_plot(self._train_loss, self._valid_loss, "Loss")
-        self._loss_accu_plot(self._train_accu, self._valid_accu, "Accuracy")
-        self._conf_matrix_plot(true_values, pred_values)
-        precision, recall, f1score = self._metrics_plots(true_values, pred_values)
+    def get_evaluation_info(self):
+        '''
+        Return all evaluation information.
 
-        return precision, recall, f1score
-    
-    def _loss_accu_plot(self, train, valid, type):
-        plt.figure()
-        plt.plot(range(1, len(train)+ 1), train, label=f"Training {type}", marker="*")
-        plt.plot(range(1, len(valid)+ 1), valid, label=f"Validation {type}", marker="*")
-        plt.title(f"Training and Validation {type} Against Epoch")
-        plt.xlabel("Epoch")
-        plt.ylabel(f"{type}")
-        plt.grid()
-        plt.legend()
-        plt.savefig(f"./A/Plots/{type} Against Epoch.PNG")
-
-    def _conf_matrix_plot(self, true, pred):
-        conf_matrix = ConfusionMatrixDisplay(confusion_matrix(true, pred))
-        conf_matrix.plot()
-        conf_matrix.figure_.savefig("./A/Plots/Confusion Matrix.PNG")
-    
-    def _metrics_plots(self, true, pred):
-        micro_precision, micro_recall, micro_f1score, _ = precision_recall_fscore_support(true, pred, average='micro')
-        macro_precision, macro_recall, macro_f1score, _ = precision_recall_fscore_support(true, pred, average='macro')
-        class_precision, class_recall, class_f1score, _ = precision_recall_fscore_support(true, pred, average=None)
-        
-        precision = np.append(class_precision, np.append(micro_precision, macro_precision))
-        recall = np.append(class_recall, np.append(micro_recall, macro_recall))
-        f1score = np.append(class_f1score, np.append(micro_f1score, macro_f1score))
-
-        precision = [float(format(100 * i, '.3f')) for i in precision]
-        recall = [float(format(100 * i, '.3f')) for i in recall]
-        f1score = [float(format(100 * i, '.3f')) for i in f1score]
-
-        classes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Micro", "Macro"]
-        ticks = np.arange(len(classes))
-        plt.figure()
-        plt.bar(ticks, precision, 0.2, label = "Precision")
-        plt.bar(ticks + 0.2, recall, 0.2, label = "Recall")
-        plt.bar(ticks + 0.4, f1score, 0.2, label = "F1")
-        plt.xlabel("Classes")
-        plt.ylabel("Score")
-        plt.ylim(0 ,120)
-        plt.grid()
-        plt.title("Performace Metrics")
-        plt.xticks(ticks + 0.2, classes)
-        plt.legend()
-        plt.savefig("./A/Plots/Performance Metrics.PNG")
-
-        return precision, recall, f1score
+        Returns:
+            self._train_accu (list):
+                All training accuracies.
+            self._train_loss (list):
+                All training losses.
+            self._valid_accu (list):
+                All validation accuracies.
+            self._valid_loss (list):
+                All validation losses.
+            self._true_values (list):
+                True labels of the test set. 
+            self._pred_values (list):
+                Predicted labels of the test set. 
+        '''
+        return self._train_accu, self._train_loss, self._valid_accu, self._valid_loss, self._true_values, self._pred_values

@@ -1,0 +1,99 @@
+RNN model selected
+Using cuda device.
+GPU: NVIDIA GeForce GTX 1650 Ti
+Loaded 46732 samples from CSV.
+Training RNN GRU model...
+---------------------------------------------
+| End of epoch:       1 | Time:      10.98s |
+| Train accuracy: 0.230 | Train loss: 2.217 |       
+| Valid accuracy: 0.353 | Valid loss: 2.102 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       2 | Time:      10.04s |
+| Train accuracy: 0.370 | Train loss: 2.086 |       
+| Valid accuracy: 0.452 | Valid loss: 2.012 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       3 | Time:       9.73s |
+| Train accuracy: 0.468 | Train loss: 1.996 |       
+| Valid accuracy: 0.532 | Valid loss: 1.934 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       4 | Time:       9.76s |
+| Train accuracy: 0.541 | Train loss: 1.923 |       
+| Valid accuracy: 0.583 | Valid loss: 1.879 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       5 | Time:      10.08s |
+| Train accuracy: 0.594 | Train loss: 1.869 |       
+| Valid accuracy: 0.610 | Valid loss: 1.851 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       6 | Time:      10.10s |
+| Train accuracy: 0.636 | Train loss: 1.828 |       
+| Valid accuracy: 0.627 | Valid loss: 1.833 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       7 | Time:       9.69s |
+| Train accuracy: 0.665 | Train loss: 1.799 |       
+| Valid accuracy: 0.636 | Valid loss: 1.825 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       8 | Time:       9.94s |
+| Train accuracy: 0.687 | Train loss: 1.776 |       
+| Valid accuracy: 0.639 | Valid loss: 1.821 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:       9 | Time:      11.19s |
+| Train accuracy: 0.706 | Train loss: 1.758 |       
+| Valid accuracy: 0.644 | Valid loss: 1.818 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      10 | Time:      10.00s |
+| Train accuracy: 0.723 | Train loss: 1.741 |       
+| Valid accuracy: 0.640 | Valid loss: 1.818 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      11 | Time:      10.75s |
+| Train accuracy: 0.737 | Train loss: 1.726 |       
+| Valid accuracy: 0.648 | Valid loss: 1.814 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      12 | Time:      10.51s |
+| Train accuracy: 0.746 | Train loss: 1.717 |       
+| Valid accuracy: 0.642 | Valid loss: 1.817 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      13 | Time:      10.80s |
+| Train accuracy: 0.757 | Train loss: 1.706 |       
+| Valid accuracy: 0.648 | Valid loss: 1.813 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      14 | Time:      10.29s |
+| Train accuracy: 0.765 | Train loss: 1.697 |       
+| Valid accuracy: 0.649 | Valid loss: 1.810 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      15 | Time:      10.38s |
+| Train accuracy: 0.771 | Train loss: 1.691 |       
+| Valid accuracy: 0.643 | Valid loss: 1.816 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      16 | Time:      10.38s |
+| Train accuracy: 0.776 | Train loss: 1.686 |       
+| Valid accuracy: 0.649 | Valid loss: 1.812 |       
+---------------------------------------------       
+---------------------------------------------
+| End of epoch:      17 | Time:      10.46s |
+| Train accuracy: 0.782 | Train loss: 1.681 |       
+| Valid accuracy: 0.647 | Valid loss: 1.812 |       
+---------------------------------------------       
+Early stopping...
+Total training time: 175.08s
+Evaluating entire test dataset...
+---------------------------------------------
+| Test accuracy:  0.641 | test loss:  1.817 |
+---------------------------------------------       
+---------------------------------------------       
+| Test accuracy:  0.641 | Test loss:  1.817 |       
+--------------------------------------------- 

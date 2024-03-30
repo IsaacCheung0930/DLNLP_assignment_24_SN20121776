@@ -14,7 +14,7 @@ class Preprocessor():
     '''
     A class for preprocessing the input dataset.
 
-    Attributes:
+    Parameters:
         data_dir (str): 
             The directory of the csv file.
         read (bool): 

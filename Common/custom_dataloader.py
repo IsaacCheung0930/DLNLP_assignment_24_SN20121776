@@ -12,7 +12,7 @@ class CustomDataloader():
     '''
     A class for splitting and converting datasets into tensor format and build up vocabulary.
 
-    Attribute:
+    Parameter:
         data_list (list):
             The preprocessed datalist.
     
@@ -231,13 +231,9 @@ class CustomDataloader():
 
         return list(test_samples), sample_dataloader
     
-    def get_split_data_df(self, type="test"):
+    def get_split_data_df(self):
         '''
         Return the splitted data in list.
-
-        Parameter:
-            type (str):
-                Determine which split to return.
         
         Return:
             self._train_list (list)
@@ -248,10 +244,9 @@ class CustomDataloader():
                 The test split list
         '''
         columns = ['index', 'label', 'question', 'answer']
-        if type == "train":
-            return pd.DataFrame(list(self._train_list), columns=columns)
-        elif type == "val":
-            return pd.DataFrame(list(self._val_list), columns=columns)
-        else:
-            return pd.DataFrame(list(self._test_list), columns=columns)
+        
+        train_df = pd.DataFrame(list(self._train_list), columns=columns)
+        val_df = pd.DataFrame(list(self._val_list), columns=columns)
+        test_df = pd.DataFrame(list(self._test_list), columns=columns)
 
+        return train_df, val_df, test_df

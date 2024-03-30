@@ -37,7 +37,7 @@ DLNLP_ASSIGNMENT_24_SN20121776
 This project requires the libraries stated in requirements.txt.
 
 ## Running the Project
-Before executing main.py, the model can be specified by the arguements -m and -t.\
+When executing main.py, the model can be specified by the arguements -m and -t.\
 -m accepts "RNN", "NN" and "Transformer";\
 -t accepts "LSTM", "GRU" and "Normal".
 ```

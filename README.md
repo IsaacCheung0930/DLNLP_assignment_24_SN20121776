@@ -4,7 +4,7 @@ This is the assignment for ELEC0141 Deep Learning for Natural Language Processin
 
 Data preprocessing is carried out using the preprocessor.py in the Common folder. The dataset is sampled down to around 44k data points and normalised such that it only contains lemmatised ASCII characters without stop words, punctuations and special characters. The cleaned data is then splitted into training, validation and test subset, and loaded into the models using the custom_dataloader.py
 
-Folder A contains the Pytorch NN and RNN model. The NN model uses a simple neural network, while the RNN model uses a recurrent neural network with long-short-term memory (LSTM) or gated recurrent unit (GRU) layers. Folder B contains a Huggingface transfromer that uses distilbert/distilbert-base-uncased as base model. 
+Folder A contains the Pytorch RNN model that uses a recurrent neural network with long-short-term memory (LSTM) or gated recurrent unit (GRU) layers. Folder B contains a Huggingface transfromer that uses the distilbert/distilbert-base-uncased as base model. 
 
 All models are fine-tuned for the dataset and their evaluation results (plots and numerical data) are logged in their corresponding folders. 
 ## Project Organisation
@@ -39,7 +39,7 @@ This project requires the libraries stated in requirements.txt.
 ## Running the Project
 When executing main.py, the model can be specified by the arguements -m and -t.\
 -m accepts "RNN" and "Transformer";\
--t accepts "LSTM", "GRU" and "Normal".
+-t accepts "LSTM", "GRU".
 ```
 python main.py -m <model> -t <type>
 ```

@@ -160,7 +160,7 @@ def print_test(test_accu, test_loss):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Model")
-    parser.add_argument("-m", "--model", type=str, default="RNN", help="RNN, NN, Transformer")
-    parser.add_argument("-t", "--type", type=str, default="LSTM", help="LSTM, GRU, Normal")
+    parser.add_argument("-m", "--model", type=str, default="RNN", help="RNN, Transformer")
+    parser.add_argument("-t", "--type", type=str, default="LSTM", help="LSTM, GRU")
     args = parser.parse_args()
     main(args)

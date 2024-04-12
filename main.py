@@ -12,14 +12,12 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 warnings.filterwarnings("ignore")
 
 from A.RNN_model import RNN
-from A.NN_model import NN
 from B.transformer_model import Transformer
 from Common.preprocessor import Preprocessor
 from Common.custom_dataloader import CustomDataloader
 from Common.processor import Processor
 from Common.early_stopper import EarlyStopper
 from Common.evaluation_plots import EvaluationPlots
-
 
 def main(args):
     '''
@@ -30,7 +28,7 @@ def main(args):
             The arguments from argparse.
     '''
     # Check if selected model is valid
-    if args.model not in ["RNN", "NN", "Transformer"]:
+    if args.model not in ["RNN", "Transformer"]:
         print("Invalid selected model.")
         sys.exit(0)
     else:
@@ -43,34 +41,29 @@ def main(args):
 
     # Preprocessing
     preprocess = Preprocessor(data_dir="Datasets/raw/train.csv", read=True, sample_size=100000)
+    preprocess.get_class_distribution()
+    preprocess.get_length_distribution()
+
+    # Export text length and class distribution
     data_list = preprocess.get_preprocessed_data()
     custom_dataloader = CustomDataloader(data_list)
-
+    
+    # --------------------------- RNN MODEL ---------------------------------#
     if args.model == "RNN":
         # Obtain dataloaders for RNN model
         train_dataloader, val_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=True)
-    elif args.model == "NN":
-        # Obtain dataloaders for NN model
-        train_dataloader, val_dataloader, test_dataloader = custom_dataloader.get_dataloader(padding=False)
-    else:
-        # Obtain dataframes for the transformer model
-        train_df, val_df, test_df = custom_dataloader.get_split_data_df()
-    
-    # --------------------------- NN MODEL ---------------------------------#
-    if args.model in ["RNN", "NN"]:
+
         # Define model parameters
         vocab_size = len(custom_dataloader.vocab)
+        print(vocab_size)
         num_class = len(preprocess.get_class_distribution())
         emsize = 128
         
-        if args.model == "RNN":
-            model = RNN(vocab_size=vocab_size, 
-                        embed_size=emsize, 
-                        num_classes=num_class, 
-                        model=args.type,
-                        use_last=True).to(device)
-        else:
-            model = NN(vocab_size, emsize, num_class).to(device)
+        model = RNN(vocab_size=vocab_size, 
+                    embed_size=emsize, 
+                    num_classes=num_class, 
+                    model=args.type,
+                    use_last=True).to(device)
 
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
         criterion = torch.nn.CrossEntropyLoss()
@@ -111,6 +104,9 @@ def main(args):
 
     # -------------------------- TRANSFORMER MODEL -------------------------------#
     if args.model == "Transformer":
+        # Obtain dataframes for the transformer model
+        train_df, val_df, test_df = custom_dataloader.get_split_data_df()
+
         # Setup transformer model
         transformer = Transformer(train_df, val_df, test_df)
         
@@ -168,18 +164,3 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--type", type=str, default="LSTM", help="LSTM, GRU, Normal")
     args = parser.parse_args()
     main(args)
-
-'''
-    test_num = 10
-    print(f"Randomly evaluating {test_num} test questions...")
-    test_samples, sample_dataloader = custom_dataloader.get_test_samples(test_num)
-    sample_pred, sample_true = process.prediction(sample_dataloader)
-    print("-" * 45)
-    for i in range(test_num):
-        print("| Question |")
-        print(f"{test_samples[i][2]}")
-        print("| Answer   | ")
-        print(f"{test_samples[i][3]}")
-        print(f"| Predicted: {sample_pred[i] + 1} | True: {sample_true[i] + 1} | ")
-    print("-" * 45)
-    '''

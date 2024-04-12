@@ -11,34 +11,34 @@ All models are fine-tuned for the dataset and their evaluation results (plots an
 ```
 DLNLP_ASSIGNMENT_24_SN20121776
 |_ A
-|   |_ Outputs              -- Contains the numerical results of the Pytorch models.
-|   |_ Plots                -- Contains the plots of the Pytorch models.
-|   |_ NN_model.py          -- The neural network model.
-|   |_ RNN_model.py         -- The recurrent neural network model.
+|   |_ Outputs                  -- Contains the numerical results of the Pytorch models.
+|   |_ Plots                    -- Contains the plots of the Pytorch models.
+|   |_ RNN_model.py             -- The recurrent neural network model.
 |_ B
-|   |_ Outputs              -- Contains the numerial results of the Huggingface model.
-|   |_ Plots                -- Contains th plots of the Huggingface model.
-|   |_ transformer_model.py -- The transformer model.
+|   |_ Outputs                  -- Contains the numerial results of the Huggingface model.
+|   |_ Plots                    -- Contains th plots of the Huggingface model.
+|   |_ transformer_model.py     -- The transformer model.
 |_ Common
-|   |_ custom_dataloader.py -- The customised dataloader.
-|   |_ early_stopper.py     -- The criteria for early stopping.
-|   |_ evaluation_plots.py  -- The code for all plots.
-|   |_ preprocessor.py      -- The code for preprocessing the dataset.
-|   |_ processor.py         -- The code for running the Pytorch models.
+|   |_ custom_dataloader.py     -- The customised dataloader.
+|   |_ early_stopper.py         -- The criteria for early stopping.
+|   |_ evaluation_plots.py      -- The code for all plots.
+|   |_ preprocessor.py          -- The code for preprocessing the dataset.
+|   |_ processor.py             -- The code for running the Pytorch models.
 |_ Datasets
-|   |_ preprocessed         -- Contains the preprocessed data.
-|   |_ raw                  -- Contains the raw data.
-|_ .gitignore               -- The git ignore file.
-|_ main.py                  -- The main file of the project.
-|_ README.md                -- The readme.
-|_ requirements.txt         -- The required Python libraries. 
+|   |_ preprocessed             -- Contains the preprocessed data.
+|   |_ raw                      -- Contains the raw data.
+|_ .gitignore                   -- The git ignore file.
+|_ main.py                      -- The main file of the project.
+|_ README.md                    -- The readme.
+|_ Report_DLNLP_24_SN20121776   -- The project report.
+|_ requirements.txt             -- The required Python libraries. 
 ```
 ## Prerequisites
 This project requires the libraries stated in requirements.txt.
 
 ## Running the Project
 When executing main.py, the model can be specified by the arguements -m and -t.\
--m accepts "RNN", "NN" and "Transformer";\
+-m accepts "RNN" and "Transformer";\
 -t accepts "LSTM", "GRU" and "Normal".
 ```
 python main.py -m <model> -t <type>

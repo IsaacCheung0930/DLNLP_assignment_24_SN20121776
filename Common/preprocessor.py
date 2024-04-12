@@ -7,6 +7,7 @@ import csv
 import pandas as pd
 import re
 import warnings
+import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
@@ -193,7 +194,7 @@ class Preprocessor():
     
     def get_class_distribution(self):
         '''
-        Return the class distribution of the preprocessed data
+        Return and plot the class distribution of the preprocessed data
 
         Return:
             class_distribution (dict):
@@ -215,11 +216,19 @@ class Preprocessor():
                               "Family & Relationships":class_count[8], 
                               "Politics & Government": class_count[9]}
         
+        plt.bar(list(class_distribution.keys()), list(class_distribution.values()))
+        plt.xlabel("Class")
+        plt.ylabel("Occurance")
+        plt.title("Class Distribution")
+        plt.xticks(rotation=15, ha='right', fontsize=8)
+        plt.grid(True)
+        plt.savefig("Common/Plots/Class Distribution.png")
+
         return class_distribution
 
     def get_length_distribution(self):
         '''
-        Return the length distribution of the question titles of the sampled data.
+        Return and plot the length distribution of the question titles of the sampled data.
 
         Return:
             sorted(length_distribution.items()) (tuple):
@@ -232,7 +241,16 @@ class Preprocessor():
                 length_distribution[length] += 1
             else:
                 length_distribution[length] = 1
+        sorted_by_key = sorted(length_distribution.keys())
+        sorted_values = [length_distribution[key] for key in sorted_by_key]
 
+        plt.bar(sorted_by_key, sorted_values)
+        plt.xlabel("Text Length")
+        plt.ylabel("Occurance")
+        plt.title("Text Length Distribution")
+        plt.grid()
+        plt.savefig("Common/Plots/Text Length Distribution.png")
+        
         return sorted(length_distribution.items())
     
     def get_sampled_data(self):

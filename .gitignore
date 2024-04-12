@@ -1,6 +1,11 @@
 __pycache__
-*.csv
+Datasets/raw/train.csv
+Datasets/raw/test.csv
 Instruction.pdf
 B/logs
 B/results
 Z_backup
+Report
+A/NN_model.py
+A/Plots/NN_Normal
+A/Outputs/NN.txt

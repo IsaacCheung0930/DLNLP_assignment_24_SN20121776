@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, DataCollatorWithPadding, TrainerCallback, logging
+from transformers import AutoTokenizer, DataCollatorWithPadding, TrainerCallback
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
 from datasets import Dataset, NamedSplit
 import evaluate
@@ -262,66 +262,3 @@ class Transformer():
         valid_loss = [entry['eval_loss'] for entry in data['log_history'] if 'eval_loss' in entry]
 
         return train_accu, train_loss, valid_accu, valid_loss, self._true_values, self._pred_values
-
-    '''
-    def evaluate(self, true_values, pred_values):
-        with open("B/results/checkpoint-1170/trainer_state.json", "r") as file:
-            data = json.load(file)
-        
-        epochs = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
-        train_accu = [entry['train_accuracy'] for entry in data['log_history'] if 'train_accuracy' in entry]
-        train_loss = [entry['train_loss'] for entry in data['log_history'] if 'train_loss' in entry]
-        valid_accu = [entry['eval_accuracy'] for entry in data['log_history'] if 'eval_accuracy' in entry]
-        valid_loss = [entry['eval_loss'] for entry in data['log_history'] if 'eval_loss' in entry]
-
-        self._loss_accu_plot(train_loss, valid_loss, epochs, "Loss")
-        self._loss_accu_plot(train_accu, valid_accu, epochs, "Accuracy")
-        self._conf_matrix_plot(true_values, pred_values)
-        precision, recall, f1score = self._metrics_plots(true_values, pred_values)
-
-    def _loss_accu_plot(self, train, valid, epoch, type):
-        plt.figure()
-        plt.plot(epoch, train, label=f"Training {type}", marker="*")
-        plt.plot(epoch, valid, label=f"Validation {type}", marker="*")
-        plt.title(f"Training and Validation {type} Against Epoch")
-        plt.xlabel("Epoch")
-        plt.ylabel(f"{type}")
-        plt.grid()
-        plt.legend()
-        plt.savefig(f"B/Plots/{type} Against Epoch.PNG")
-    
-    def _conf_matrix_plot(self, true, pred):
-        conf_matrix = ConfusionMatrixDisplay(confusion_matrix(true, pred))
-        conf_matrix.plot()
-        conf_matrix.figure_.savefig("B/Plots/Confusion Matrix.PNG")
-    
-    def _metrics_plots(self, true, pred):
-        micro_precision, micro_recall, micro_f1score, _ = precision_recall_fscore_support(true, pred, average='micro')
-        macro_precision, macro_recall, macro_f1score, _ = precision_recall_fscore_support(true, pred, average='macro')
-        class_precision, class_recall, class_f1score, _ = precision_recall_fscore_support(true, pred, average=None)
-        
-        precision = np.append(class_precision, np.append(micro_precision, macro_precision))
-        recall = np.append(class_recall, np.append(micro_recall, macro_recall))
-        f1score = np.append(class_f1score, np.append(micro_f1score, macro_f1score))
-
-        precision = [float(format(100 * i, '.3f')) for i in precision]
-        recall = [float(format(100 * i, '.3f')) for i in recall]
-        f1score = [float(format(100 * i, '.3f')) for i in f1score]
-
-        classes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Micro", "Macro"]
-        ticks = np.arange(len(classes))
-        plt.figure()
-        plt.bar(ticks, precision, 0.2, label = "Precision")
-        plt.bar(ticks + 0.2, recall, 0.2, label = "Recall")
-        plt.bar(ticks + 0.4, f1score, 0.2, label = "F1")
-        plt.xlabel("Classes")
-        plt.ylabel("Score")
-        plt.ylim(0 ,120)
-        plt.grid()
-        plt.title("Performace Metrics")
-        plt.xticks(ticks + 0.2, classes)
-        plt.legend()
-        plt.savefig("B/Plots/Performance Metrics.PNG")
-
-        return precision, recall, f1score
-    '''
